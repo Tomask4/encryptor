@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <title>Crypto Hub</title>
+    <style>
+        :root {
+            --bg-dark: #0f0e17;
+            --text-light: #fffffe;
+            --accent-color: #2ecc71;
+            --secondary-color: #383838;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .container {
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 15px;
+            padding: 40px;
+            width: 450px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(transparent, transparent, transparent, var(--accent-color));
+            animation: rotate 4s linear infinite;
+        }
+        .container::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: var(--bg-dark);
+            border-radius: 15px;
+        }
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(30,30,60,0.8);
+            border: 1px solid var(--accent-color);
+            color: var(--text-light);
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-color);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: var(--secondary-color);
+        }
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            background: rgba(30,30,60,0.8);
+            color: var(--text-light);
+            border: 1px solid var(--accent-color);
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        #crypto-page { display: none; }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        footer {
+            padding: 20px;
+            text-align: center;
+            margin-top: auto;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+        }
+        #themeSelector {
+            background-color: var(--accent-color);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content" id="login-page">
+            <h2>Crypto Hub Login</h2>
+            <input type="text" id="username" placeholder="Gebruikersnaam">
+            <input type="password" id="password" placeholder="Wachtwoord">
+            <button onclick="login()">Inloggen</button>
+            <p style="visibility: hidden;">-</p>
+            <select id="themeSelector" onchange="changeAccentColor(this.value)">
+                <option value="#2ecc71">Groen</option>
+                <option value="#3498db">Blauw</option>
+                <option value="#e74c3c">Rood</option>
+                <option value="#f39c12">Oranje</option>
+            </select>
+        </div>
+
+        <div class="content" id="crypto-page">
+            <h2>Versleuteling</h2>
+            <textarea id="input" placeholder="Voer tekst in"></textarea>
+            <input type="text" id="key" placeholder="Geheime sleutel" value="standaard"></input>
+            <button onclick="encrypt()">Versleutelen</button>
+            <p style="visibility: hidden;">-</p>
+            <button onclick="decrypt()">Ontsleutelen</button>
+            <textarea id="output" readonly placeholder="Resultaat"></textarea>
+            <select id="themeSelector" onchange="changeAccentColor(this.value)">
+                <option value="#2ecc71">Groen</option>
+                <option value="#3498db">Blauw</option>
+                <option value="#e74c3c">Rood</option>
+                <option value="#f39c12">Oranje</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        function changeAccentColor(color) {
+            document.documentElement.style.setProperty('--accent-color', color);
+        }
+        
+        const users = {
+            'Admin': 'Crypt0HubP@ssw0rd2025!'
+        };
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (users[username] && users[username] === password) {
+                document.getElementById('login-page').style.display = 'none';
+                document.getElementById('crypto-page').style.display = 'block';
+            } else {
+                alert('Ongeldige inloggegevens');
+            }
+        }
+
+        function generateKey(text, providedKey) {
+            let extendedKey = providedKey;
+            while (extendedKey.length < text.length) {
+                extendedKey += providedKey;
+            }
+            return extendedKey.slice(0, text.length);
+        }
+
+        function encrypt() {
+            const input = document.getElementById('input').value;
+            const key = document.getElementById('key').value;
+            
+            if (!key) {
+                alert('Voer een sleutel in');
+                return;
+            }
+            
+            const extendedKey = generateKey(input, key);
+            
+            const encrypted = input.split('').map((char, index) => {
+                const charCode = char.charCodeAt(0);
+                const keyCode = extendedKey[index].charCodeAt(0);
+                return String.fromCharCode(charCode ^ keyCode);
+            }).join('');
+
+            document.getElementById('output').value = btoa(encrypted);
+        }
+
+        function decrypt() {
+            const input = document.getElementById('input').value;
+            const key = document.getElementById('key').value;
+            
+            if (!key) {
+                alert('Voer een sleutel in');
+                return;
+            }
+            
+            try {
+                const decoded = atob(input);
+                const extendedKey = generateKey(decoded, key);
+                
+                const decrypted = decoded.split('').map((char, index) => {
+                    const charCode = char.charCodeAt(0);
+                    const keyCode = extendedKey[index].charCodeAt(0);
+                    return String.fromCharCode(charCode ^ keyCode);
+                }).join('');
+
+                document.getElementById('output').value = decrypted;
+            } catch (e) {
+                alert('Ongeldige invoer of sleutel');
+            }
+        }
+    </script>
+</body>
+</html>
