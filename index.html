@@ -129,12 +129,14 @@
             <input type="password" id="password" placeholder="Wachtwoord">
             <button onclick="login()">Inloggen</button>
             <p style="visibility: hidden;">-</p>
-            <select id="themeSelector" onchange="changeAccentColor(this.value)">
-                <option value="#2ecc71">Groen</option>
-                <option value="#3498db">Blauw</option>
-                <option value="#e74c3c">Rood</option>
-                <option value="#f39c12">Oranje</option>
-            </select>
+            <div style="display: flex;">
+                <select style="flex: 1" id="themeSelector" onchange="changeAccentColor(this.value)">
+                    <option value="#2ecc71">Groen</option>
+                    <option value="#3498db">Blauw</option>
+                    <option value="#e74c3c">Rood</option>
+                    <option value="#f39c12">Oranje</option>
+                </select>
+            </div>
         </div>
 
         <div class="content" id="crypto-page">
