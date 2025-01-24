@@ -87,6 +87,7 @@
             padding: 12px;
             margin: 10px 0;
             border-radius: 5px;
+            resize: none;
         }
         #crypto-page { display: none; }
 
@@ -110,12 +111,20 @@
             cursor: pointer;
             position: relative;
         }
+        #key {
+            background-color: var(--accent-color);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            position: relative;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="content" id="login-page">
-            <h2>Crypto Hub Login</h2>
+            <h2>Encryptor</h2>
             <input type="text" id="username" placeholder="Gebruikersnaam">
             <input type="password" id="password" placeholder="Wachtwoord">
             <button onclick="login()">Inloggen</button>
@@ -129,19 +138,39 @@
         </div>
 
         <div class="content" id="crypto-page">
-            <h2>Versleuteling</h2>
+            <h2>Encryptor</h2>
             <textarea id="input" placeholder="Voer tekst in"></textarea>
-            <input type="text" id="key" placeholder="Geheime sleutel" value="standaard"></input>
+            <div style="display: flex;">
+                <select style="flex: 1" id="key">
+                    <option disabled selected>Kies een key</option>
+                    <option value="standaard">Standaard</option>
+                    <option value="1">Channel 1</option>
+                    <option value="2">Channel 2</option>
+                    <option value="3">Channel 3</option>
+                    <option value="4">Channel 4</option>
+                    <option value="5">Channel 5</option>
+                    <option value="6">Channel 6</option>
+                    <option value="7">Channel 7</option>
+                    <option value="8">Channel 8</option>
+                    <option value="9">Channel 9</option>
+                    <option value="10">Channel 10</option>
+                </select>
+            </div>
+            <p style="visibility: hidden;">-</p>
             <button onclick="encrypt()">Versleutelen</button>
             <p style="visibility: hidden;">-</p>
             <button onclick="decrypt()">Ontsleutelen</button>
             <textarea id="output" readonly placeholder="Resultaat"></textarea>
-            <select id="themeSelector" onchange="changeAccentColor(this.value)">
-                <option value="#2ecc71">Groen</option>
-                <option value="#3498db">Blauw</option>
-                <option value="#e74c3c">Rood</option>
-                <option value="#f39c12">Oranje</option>
-            </select>
+            <div style="display: flex;">
+                <select style="flex: 1" id="themeSelector" onchange="changeAccentColor(this.value)">
+                    <option value="#2ecc71">Groen</option>
+                    <option value="#3498db">Blauw</option>
+                    <option value="#e74c3c">Rood</option>
+                    <option value="#f39c12">Oranje</option>
+                </select>
+                <p style="visibility: hidden;">-</p>
+                <button style="flex: 1" onclick="logout()">Logout</button>
+            </div>
         </div>
     </div>
 
@@ -164,6 +193,11 @@
             } else {
                 alert('Ongeldige inloggegevens');
             }
+        }
+
+        function logout() {
+            document.getElementById('login-page').style.display = 'block';
+            document.getElementById('crypto-page').style.display = 'none';
         }
 
         function generateKey(text, providedKey) {
